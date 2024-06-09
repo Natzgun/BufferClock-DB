@@ -4,32 +4,39 @@
 #include "Page.h"
 
 class Frame {
-   private:
-    int frameID;
-    bool dirty_flag;
-    int pinCount;
-    Page page;
+private:
+  int frameID;
+  bool dirty_flag;
+  int pinCount;
+  Page page;
 
-   public:
-    // Constructor
-    Frame(int frameID);
-
-
-    // Getters
-    int getframeID();
-    bool isDirty();
-    int getPinCount();
+public:
+  // Constructor
+  Frame(int frameID);
 
 
-    Page& getPage();
+  // Getters
+  int getframeID();
 
-    // Setters
-    void setFrameID(int id);
-    void setDirtyFlag(bool dirty);
-    void setPinCount(int pin);
-    void setPage(Page pg);
-    void incrementPinCount();
-    void decrementPinCount();
+  bool isDirty();
+
+  int getPinCount();
+
+
+  Page &getPage();
+
+  // Setters
+  void setFrameID(int id);
+
+  void setDirtyFlag(bool dirty);
+
+  void setPinCount(int pin);
+
+  void setPage(Page pg);
+
+  void incrementPinCount();
+
+  void decrementPinCount();
 };
 
 #endif  // FRAME_H

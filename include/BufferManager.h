@@ -8,21 +8,26 @@
 #include "BufferPool.h"
 
 class BufferManager {
-   private:
-    int numFrames;
-    BufferPool bpool;
+private:
+  int numFrames;
+  BufferPool bpool;
 
-   public:
-    // Constructor
-    BufferManager(int numFrames);
+public:
+  // Constructor
+  BufferManager(int numFrames);
 
-    // Métodos
-    void loadPageFromDisk(string blockPath, int pageID, char _mode);
-    void killProcess(int pageID);
-    void savePageToDisk(int pageID);
-    void updatePage(int pageID);
-    void deletePage(int pageID);
-    void printTableFrame();
+  // Métodos
+  void loadPageFromDisk(string blockPath, int pageID, char _mode);
+
+  void killProcess(int pageID);
+
+  void savePageToDisk(int pageID);
+
+  void updatePage(int pageID);
+
+  void deletePage(int pageID);
+
+  void printTableFrame();
 };
 
 #endif  // BUFFERMANAGER_H
