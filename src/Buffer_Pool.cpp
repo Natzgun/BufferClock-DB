@@ -244,11 +244,17 @@ void BufferPool :: clockPolicy(int pagID, string path, bool mode){
           if(my_clock.getHandClock() > (numFrames - 1)){
             my_clock.setHandClock(0);
           }
-          
           cero = true; //DETENER EL BUCLE WHILE, CONSEGUIMOS UN 0 EN GETREFBIT
-          posFrame = frames[my_clock.getHandClock()].getframeID(); // GUARDAR LA POSICION DEL FRAME QUE SU GETREFBIT ES 0 PARA CAMBIARLO;
+          posFrame = frames[i].getframeID(); // GUARDAR LA POSICION DEL FRAME QUE SU GETREFBIT ES 0 PARA CAMBIARLO;
           liberarP = false;
           break;
+        }
+        else{
+          my_clock.incrementHC();
+          cout << "Valor de handClock, pincount > 0 -> " << my_clock.getHandClock() << "\n"; 
+          if(my_clock.getHandClock() > (numFrames - 1)){
+            my_clock.setHandClock(0);
+          }
         }
         vuelta++;//CONTAR PARA SIMULAR SI EN TODA LA VUELTA EL PINCOUNT ES MAYOR A 0 EN TODOS LOS FRAMES
       }

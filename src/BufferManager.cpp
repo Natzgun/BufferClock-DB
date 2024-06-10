@@ -76,9 +76,9 @@ void BufferManager :: useClockPolicy(int pageID, string path, char _mode){
     bpool.printTableFrame();
     return;
   }
-  cout << "\n**************************************\n";
+  cout << "\n****************************************************\n";
   bpool.clockPolicy(pageID, path, mode);
-  cout << "\n**************************************\n";
+  cout << "\n****************************************************\n";
   bpool.printTableFrame();
 }
 
