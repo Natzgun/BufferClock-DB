@@ -251,10 +251,10 @@ void BufferPool :: clockPolicy(int pagID, string path, bool mode){
         }
         else{
           my_clock.incrementHC();
-          cout << "Valor de handClock, pincount > 0 -> " << my_clock.getHandClock() << "\n"; 
           if(my_clock.getHandClock() > (numFrames - 1)){
             my_clock.setHandClock(0);
           }
+          cout << "Valor de handClock, pincount > 0 -> " << my_clock.getHandClock() << "\n"; 
         }
         vuelta++;//CONTAR PARA SIMULAR SI EN TODA LA VUELTA EL PINCOUNT ES MAYOR A 0 EN TODOS LOS FRAMES
       }

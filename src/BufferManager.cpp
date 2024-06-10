@@ -84,11 +84,12 @@ void BufferManager ::useClockPolicy(int pageID, string path, char _mode) {
 void BufferManager::killProcess(int pageID) {
   std::string killed;
   if (bpool.getFrames()[bpool.getFrameId(pageID)].isDirty() == true) {
-    cout << "¿Desea guardarlo en el disco?" << std::endl;
-    cout << "Si/No:";
+    cout << "Desea guardarlo en el disco?" << std::endl;
+    cout << "Si/No: ";
     cin >> killed;
     if (killed == "Si") {
       savePageToDisk(pageID);
+      bpool.getFrames()[bpool.getFrameId(pageID)].setDirtyFlag(0);
     }
   }
   bpool.modifyPinInExistingFrame(pageID, 'k');
