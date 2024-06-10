@@ -3,7 +3,7 @@
 /* Jose Paredes */
 // Constructor
 Frame::Frame(int frameID)
-  : frameID(frameID), dirty_flag(false), pinCount(0) {
+  : frameID(frameID), dirty_flag(false), pinCount(0), refbit(-1) {
 }
 
 // Getter for frameID
@@ -14,6 +14,10 @@ int Frame::getframeID() {
 // Getter for page
 Page &Frame::getPage() {
   return page;
+}
+
+int Frame :: getRefBit(){
+  return refbit;
 }
 
 // Setter for page
@@ -34,6 +38,13 @@ void Frame::setDirtyFlag(bool dirty_flag) {
 // Getter for pinCount
 int Frame::getPinCount() {
   return pinCount;
+}
+
+void Frame :: setPinCount(int value){
+  pinCount = value;
+}
+void Frame :: setRefBit(int refBit){
+  this -> refbit = refBit;
 }
 
 // Increment pinCount

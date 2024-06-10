@@ -8,6 +8,7 @@ set(SOURCES
     src/BufferManager.cpp
     src/Buffer_Pool.cpp
     src/Frame.cpp
+    src/Clock.cpp
 )
 
 # Establece el directorio de salida para los archivos compilados

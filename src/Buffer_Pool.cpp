@@ -5,7 +5,7 @@
 
 #include "../include/BufferPool.h"
 #include "../include/Frame.h"
-
+#include "../include/Clock.h"
 using namespace std;
 
 BufferPool::BufferPool() {
@@ -16,11 +16,14 @@ BufferPool::BufferPool() {
 BufferPool::BufferPool(int numFrames) {
   this->numFrames = numFrames;
   this->capacity = 720;
-
+  my_clock.setSize(numFrames);
   for (int i = 0; i < this->numFrames; i++) {
     Frame frame(i);
     this->frames.push_back(frame);
-    page_table[i] = -1;
+    page_table[i] = -1; //CON -1 VALOR PREDETERMINADO(VACIO) Y LA CLAVE ES EL FRAMEid Y EL VALOR EL PAGEid
+  }
+  FOR_LOOP(0, i, this -> numFrames){
+    firstFree.push(i);
   }
 }
 
@@ -37,9 +40,10 @@ Frame &BufferPool::getFrame(int frameID) {
 
 void BufferPool::modifyPinInExistingFrame(int pageID, char flag) {
   for (int i = 0; i < frames.size(); i++) {
-    if (page_table[frames[i].getframeID()] == pageID) {
+    if (page_table[frames[i].getframeID()] == pageID) { 
       if (flag == 'i') {
         frames[i].incrementPinCount();
+        frames[i].setRefBit(1);
       } else if (flag == 'k' && frames[i].getPinCount() > 0) {
         frames[i].decrementPinCount();
       }
@@ -56,23 +60,6 @@ void BufferPool::setPage(Frame &frame, int frameID) {
     return;
   }
   cout << "\nPagina [" << frameID << "] cargada correctamente." << endl;
-}
-
-void BufferPool::printPage(int frameID) {
-  if (frameID >= 0 && frameID < numFrames) {
-    if (page_table[frameID] == 1) {
-      Frame &frame = frames[frameID];
-      cout << "Frame ID: " << frameID << endl;
-      cout << "Dirty Flag: " << "(frame.isDirty() ? \" true \" : \" false \")" << endl;
-      cout << "Pin Count: " << "frame.getPinCount()" << endl;
-      cout << "Page Capacity: " << "frame.getPage().getPageCapacity()" << endl;
-      cout << "Page Content: " << "frame.getPage().getPageContent() " << endl;
-    } else {
-      cout << "Frame ID: " << frameID << " no contiene una página." << endl;
-    }
-  } else {
-    cout << "Frame ID fuera de rango." << endl;
-  }
 }
 
 void BufferPool::addRecord(int frameID, string record) {
@@ -103,22 +90,6 @@ void BufferPool::deleteRecord(int frameID, string record) {
   }
 }
 
-void BufferPool::pageIsDirty(int pageID) {
-  if (pageID >= 0 && pageID < numFrames) {
-    if (page_table[pageID] == 1) {
-      Frame &frame = frames[pageID];
-      // return frame.isDirty();
-      return;
-    } else {
-      cout << "Frame ID: " << pageID << " no contiene una página." << endl;
-      return;
-    }
-  } else {
-    cout << "Frame ID fuera de rango." << endl;
-    return;
-  }
-}
-
 void BufferPool::freeFrame(int frameID) {
   if (frameID >= 0 && frameID < numFrames) {
     frames[frameID] = Frame(frameID);
@@ -129,19 +100,46 @@ void BufferPool::freeFrame(int frameID) {
   }
 }
 
-int BufferPool::findFreeFrame() {
-  for (auto it = page_table.begin(); it != page_table.end(); ++it) {
-    if (it->second == -1) return it->first;
-  }
 
+int BufferPool::findFreeFrame() {
+  if(!firstFree.empty()){
+    int frameL = firstFree.front();
+    firstFree.pop();
+    return frameL;
+  }
+  else{
+    for (auto it = page_table.begin(); it != page_table.end(); ++it) {
+      if (it->second == -1) return it->first;
+    }
+  }
   /*Si retorna -2 es porque todos los frames ya tienen cargado una pagina*/
   return -2;
 }
 
-void BufferPool::setPageInFrame(int frameID, int pageID, Frame &frame) {
+/*void BufferPool::setPageInFrame(int frameID, int pageID, Frame &frame) {
   if (frameID >= 0 && frameID < numFrames) {
     frames[frameID] = frame;
     page_table[frameID] = pageID;
+  } else {
+    cout << "SetP: Frame ID fuera de rango" << endl;
+    return;
+  }
+
+  // printTableFrame();
+
+  cout << "\nPagina [" << frameID << "] cargada Correctamente\n"
+      << endl;
+  setHistory(pageID);
+}*/
+//ERICK MALCOACCHA Y SEBASTIAN MENDOZA
+void BufferPool::setPageInFrame2(int frameID, int pageID, bool dirty, Page page) {
+  if (frameID >= 0 && frameID < numFrames) {
+    page_table[frameID] = pageID;
+    frames[frameID].setPage(page);
+    frames[frameID].setDirtyFlag(dirty);
+    frames[frameID].setPinCount(1);
+    frames[frameID].setRefBit(1);
+
   } else {
     cout << "SetP: Frame ID fuera de rango" << endl;
     return;
@@ -172,19 +170,20 @@ int BufferPool::getFrameId(int pageID) {
   return -1;
 }
 
+//SERGIO CASTILLO
 void BufferPool::printTableFrame() {
   cout << setw(10) << "Frame Id" << "\t"
       << setw(10) << "Page Id" << "\t"
       << setw(10) << "Dirty Bit" << "\t"
       << setw(10) << "Pin Count" << "\t"
-      << setw(10) << "Last Used" << endl;
+      << setw(10) << "Ref Bit" << "\t\n";
 
   for (int i = 0; i < frames.size(); i++) {
     cout << setw(10) << frames[i].getframeID() << "\t"
         << setw(10) << frames[i].getPage().getPageId() << "\t"
         << setw(10) << (frames[i].isDirty() ? "Yes" : "No") << "\t"
         << setw(10) << frames[i].getPinCount() << "\t"
-        << setw(10) << history[frames[i].getframeID()] << "\t" << endl;
+        << setw(10) << frames[i].getRefBit() << "\t\n";
   }
 }
 
@@ -217,5 +216,61 @@ void BufferPool::LRU() {
     freeFrame(lastUsedFrame);
   } else {
     cout << "No se puede liberar el frame " << lastUsedFrame << " porque tiene un pin count mayor a 0" << endl;
+  }
+}
+
+//FUNCION DE POLITICA DE REEMPLAZO
+//ERIK RAMOS QUISPE 
+void BufferPool :: clockPolicy(int pagID, string path, bool mode){
+  bool cero = false; 
+  int posFrame = -1;
+  bool liberarP = true;
+  int vuelta = 0;
+  while(!cero){ //ITERAR HASTA ENCONTRAR UN REFBIT EN 0
+  
+    FOR_LOOP(my_clock.getHandClock(), i, numFrames){ //BUSCARA UN 0 A PARTIR DEL HANDCLOCK
+      if(frames[i].getRefBit() != -1){//VERIFICARA SI AL FRAME SE LE ASIGNO UNA PAGINA
+        if(frames[i].getPinCount() == 0 && frames[i].getRefBit() == 1){ //SI EL GETREFBIT ESTA EN 1 LO CAMBIA A 0
+          my_clock.incrementHC();
+          if(my_clock.getHandClock() > (numFrames - 1)){
+            my_clock.setHandClock(0);
+          }
+          cout << "Valor de handClock -> " <<  my_clock.getHandClock() << "\n";
+          frames[i].setRefBit(0);
+          liberarP = false;
+        }
+        else if(frames[i].getPinCount() == 0 && frames[i].getRefBit() == 0){ //DETENER EL BUCLE FOR SI ENCONTRAMOS UN GETREFBIT 0
+          my_clock.incrementHC();
+          if(my_clock.getHandClock() > (numFrames - 1)){
+            my_clock.setHandClock(0);
+          }
+          
+          cero = true; //DETENER EL BUCLE WHILE, CONSEGUIMOS UN 0 EN GETREFBIT
+          posFrame = frames[my_clock.getHandClock()].getframeID(); // GUARDAR LA POSICION DEL FRAME QUE SU GETREFBIT ES 0 PARA CAMBIARLO;
+          liberarP = false;
+          break;
+        }
+        vuelta++;//CONTAR PARA SIMULAR SI EN TODA LA VUELTA EL PINCOUNT ES MAYOR A 0 EN TODOS LOS FRAMES
+      }
+    } 
+    if(vuelta == numFrames && liberarP){//SI SE DIO TODA LA VUELTA SIN PINCOUNT = 0 SE ROMPE EL BUCLE WHILE
+      break;
+    } 
+  }
+  if(!liberarP){//ACTUALIZA LA INFORMACION CON LA NUEVA PAGINA
+    freeFrame(posFrame);
+    int frameFree = findFreeFrame();
+    Page cambiarPage; 
+    cambiarPage.setPageId(pagID);  
+    cambiarPage.setName(path);
+    frames[frameFree].setPage(cambiarPage);
+    frames[frameFree].setDirtyFlag(mode);
+    frames[frameFree].setPinCount(1);
+    frames[frameFree].setRefBit(1);
+    page_table[frameFree] = pagID;
+    cout << "Valor de handClock encontro un 0(manecilla avanzo)-> " << my_clock.getHandClock() << "\n";
+  }
+  else{//SI SE DA TODA LA VUELTA SIN UN PINCOUNT = 0
+    cout << "TIENES QUE LIBERAR PROCESOS, TODOS LAS PAGINAS ESTAN SIENDO UTILZADAS\n";
   }
 }

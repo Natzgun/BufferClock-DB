@@ -3,8 +3,9 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
-
+#include <queue>
 #include "Frame.h"
+#include "Clock.h"
 
 /*Sebastian Andres */
 
@@ -14,9 +15,11 @@ class BufferPool {
 private:
   int numFrames;
   int capacity;
+  clockP my_clock;
   vector<Frame> frames;
   unordered_map<int, int> history;
   unordered_map<int, int> page_table;
+  queue<int> firstFree;
 
 public:
   BufferPool(); /* Constructor por defecto */
@@ -40,4 +43,7 @@ public:
   void setHistory(int pageID); /* Guardar el historial de las paginas */
   void incrementHistory(); /* Incrementar el historial de las paginas */
   void LRU(); /* El LRU */
+  void clockPolicy(int, string, bool);
+  void setPinCount(int);
+  void setPageInFrame2(int frameID, int pageID, bool dirty, Page page);
 };

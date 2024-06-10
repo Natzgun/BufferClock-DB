@@ -18,9 +18,9 @@ el algoritmo LRU guarda la página reemplazada en el disco y luego carga la nuev
 página en ese frame.
 */
 
-void BufferManager::loadPageFromDisk(string blockPath, int pageID, char _mode) {
+/*void BufferManager::loadPageFromDisk(string blockPath, int pageID, char _mode) {
   bool mode = _mode == 'W' ? true : false;
-  if (bpool.isPageLoaded(pageID)) {
+  if (bpool.isPageLoaded(pageID)){
     cout << "La pagina ya esta cargada" << "\n";
     if (_mode == 'L') {
       bpool.getFrame(bpool.getFrameId(pageID)).setDirtyFlag(false);
@@ -47,6 +47,38 @@ void BufferManager::loadPageFromDisk(string blockPath, int pageID, char _mode) {
 
   bpool.setPageInFrame(idFree, pageID, tempFrame);
   bpool.incrementHistory();
+  bpool.printTableFrame();
+}*/
+
+
+//ESTO CARGA UN BLOQUE DEL DISCO AL BUFFER MANAGER
+//SEGIO CASTILLO Y ERICK MALCOACCHA
+void BufferManager :: useClockPolicy(int pageID, string path, char _mode){
+  bool mode = _mode == 'W'? true : false;
+  if(bpool.isPageLoaded(pageID)){
+    cout << "La pagina ya esta cargada\n";
+    if (_mode == 'L') {
+      bpool.getFrame(bpool.getFrameId(pageID)).setDirtyFlag(false);
+    } else {
+      bpool.getFrame(bpool.getFrameId(pageID)).setDirtyFlag(true);
+    }  
+    bpool.modifyPinInExistingFrame(pageID, 'i');
+    bpool.printTableFrame();
+    return;
+  }
+  int valueF = bpool.findFreeFrame(); 
+  if(valueF != -2){
+    Page tempPage;
+    tempPage.setName(path);
+    tempPage.setPageId(pageID);
+
+    bpool.setPageInFrame2(valueF, pageID ,mode ,tempPage);    
+    bpool.printTableFrame();
+    return;
+  }
+  cout << "\n**************************************\n";
+  bpool.clockPolicy(pageID, path, mode);
+  cout << "\n**************************************\n";
   bpool.printTableFrame();
 }
 

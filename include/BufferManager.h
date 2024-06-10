@@ -28,6 +28,8 @@ public:
   void deletePage(int pageID);
 
   void printTableFrame();
+
+  void useClockPolicy(int,string,char);
 };
 
 #endif  // BUFFERMANAGER_H

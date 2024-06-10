@@ -9,6 +9,7 @@ private:
   bool dirty_flag;
   int pinCount;
   Page page;
+  int refbit;
 
 public:
   // Constructor
@@ -25,12 +26,16 @@ public:
 
   Page &getPage();
 
+  int getRefBit();
+
   // Setters
   void setFrameID(int id);
 
   void setDirtyFlag(bool dirty);
 
   void setPinCount(int pin);
+
+  void setRefBit(int refBit);
 
   void setPage(Page pg);
 
