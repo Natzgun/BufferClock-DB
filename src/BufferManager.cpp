@@ -50,29 +50,28 @@ página en ese frame.
   bpool.printTableFrame();
 }*/
 
-
-//ESTO CARGA UN BLOQUE DEL DISCO AL BUFFER MANAGER
-//SEGIO CASTILLO Y ERICK MALCOACCHA
-void BufferManager :: useClockPolicy(int pageID, string path, char _mode){
-  bool mode = _mode == 'W'? true : false;
-  if(bpool.isPageLoaded(pageID)){
+// ESTO CARGA UN BLOQUE DEL DISCO AL BUFFER MANAGER
+// SEGIO CASTILLO Y ERICK MALCOACCHA
+void BufferManager ::useClockPolicy(int pageID, string path, char _mode) {
+  bool mode = _mode == 'W' ? true : false;
+  if (bpool.isPageLoaded(pageID)) {
     cout << "La pagina ya esta cargada\n";
     if (_mode == 'L') {
       bpool.getFrame(bpool.getFrameId(pageID)).setDirtyFlag(false);
     } else {
       bpool.getFrame(bpool.getFrameId(pageID)).setDirtyFlag(true);
-    }  
+    }
     bpool.modifyPinInExistingFrame(pageID, 'i');
     bpool.printTableFrame();
     return;
   }
-  int valueF = bpool.findFreeFrame(); 
-  if(valueF != -2){
+  int valueF = bpool.findFreeFrame();
+  if (valueF != -2) {
     Page tempPage;
     tempPage.setName(path);
     tempPage.setPageId(pageID);
 
-    bpool.setPageInFrame2(valueF, pageID ,mode ,tempPage);    
+    bpool.setPageInFrame2(valueF, pageID, mode, tempPage);
     bpool.printTableFrame();
     return;
   }
@@ -83,9 +82,22 @@ void BufferManager :: useClockPolicy(int pageID, string path, char _mode){
 }
 
 void BufferManager::killProcess(int pageID) {
+  std::string killed;
+  if (bpool.getFrames()[bpool.getFrameId(pageID)].isDirty() == true) {
+    cout << "¿Desea guardarlo en el disco?" << std::endl;
+    cout << "Si/No:";
+    cin >> killed;
+    if (killed == "Si") {
+      savePageToDisk(pageID);
+    }
+  }
   bpool.modifyPinInExistingFrame(pageID, 'k');
   // bpool.incrementHistory();
   bpool.printTableFrame();
 }
 
 void BufferManager::printTableFrame() { bpool.printTableFrame(); }
+
+void BufferManager::savePageToDisk(int pageID) {
+  cout << "Pagina guardado en disco :>" << endl;
+}
