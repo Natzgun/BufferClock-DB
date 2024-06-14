@@ -176,13 +176,15 @@ void BufferPool::printTableFrame() {
        << "\t" << setw(10) << "Dirty Bit"
        << "\t" << setw(10) << "Pin Count"
        << "\t" << setw(10) << "Ref Bit"
+       << "\t" << setw(10) << "Pinned"
        << "\t\n";
 
   for (int i = 0; i < frames.size(); i++) {
     cout << setw(10) << frames[i].getframeID() << "\t" << setw(10)
          << frames[i].getPage().getPageId() << "\t" << setw(10)
          << (frames[i].isDirty() ? "Yes" : "No") << "\t" << setw(10)
-         << frames[i].getPinCount() << "\t" << setw(10) << frames[i].getRefBit()
+         << frames[i].getPinCount() << "\t" << setw(10) << frames[i].getRefBit() << setw(10)
+         << (frames[i].getPinned() ? "Yes" : "No") << "\t" << setw(10)
          << "\t\n";
   }
 }
@@ -315,7 +317,13 @@ int BufferPool ::clockPolicy() {
   int iteratorTwoTurns = 0;
   int posFrame = findRefBit0(iteratorTwoTurns);
   while (iteratorTwoTurns <= 2 * numFrames){
-    if (!frames[posFrame].isDirty()) {
+    if (frames[posFrame].getPinned()) {
+      iteratorTwoTurns++;
+      my_clock.incrementHC();
+      continue;
+    }
+
+    if (!frames[posFrame].isDirty() && frames[posFrame].getPinned() == false) {
       break;
     } else {
       posFrame = findRefBit0(iteratorTwoTurns);
