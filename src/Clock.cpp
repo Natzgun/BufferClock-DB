@@ -17,4 +17,9 @@ void clockP ::setSize(int size) { this->size = size; }
 
 void clockP ::setHandClock(int hc) { this->handClock = hc; }
 
-void clockP ::incrementHC() { handClock++; }
+void clockP ::incrementHC() { 
+  handClock++; 
+  if(handClock >= size){
+    handClock = 0;
+  }
+}

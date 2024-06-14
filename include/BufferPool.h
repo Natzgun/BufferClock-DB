@@ -43,7 +43,10 @@ public:
   void setHistory(int pageID); /* Guardar el historial de las paginas */
   void incrementHistory(); /* Incrementar el historial de las paginas */
   void LRU(); /* El LRU */
-  void clockPolicy(int, string, bool);
   void setPinCount(int);
   void setPageInFrame2(int frameID, int pageID, bool dirty, Page page);
+  int findRefBit0();
+  int clockPolicy();
+  void  liberarPagina();
+  void clock_P();
 };
