@@ -22,5 +22,6 @@ public:
   void setSize(int size);
   void setHandClock(int hc);
   void incrementHC();
+  void decrementHC();
 };
 #endif

@@ -76,7 +76,7 @@ void BufferManager ::useClockPolicy(int pageID, string path, char _mode) {
     return;
   }
   cout << "\n****************************************************\n";
-  bpool.clockPolicy(pageID, path, mode);
+  bpool.clock_Replacement(pageID, path, mode);
   cout << "\n****************************************************\n";
   bpool.printTableFrame();
 }
@@ -100,5 +100,7 @@ void BufferManager::killProcess(int pageID) {
 void BufferManager::printTableFrame() { bpool.printTableFrame(); }
 
 void BufferManager::savePageToDisk(int pageID) {
-  cout << "Pagina guardado en disco :>" << endl;
+  cout << "=============================================\n";
+  cout << "Pagina guardado en disco :D" << endl;
+  cout << "=============================================\n";
 }

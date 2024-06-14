@@ -286,20 +286,22 @@ UTILZADAS\n";
   }
 }*/
 
-int BufferPool ::findRefBit0() {
+int BufferPool ::findRefBit0(int& iteratorTwoTurns) {
   bool rfBit = true;
   int posFrame = 0;
   while (rfBit) {
     for (int i = my_clock.getHandClock(); i < numFrames; i++) {
       if (frames[i].getRefBit() == 0) {
+        iteratorTwoTurns++;
         my_clock.incrementHC();
         posFrame = i;
         rfBit = false;
         break;
-      }
-      else{
+      } else{
         frames[i].setRefBit(0);
       }
+
+      iteratorTwoTurns++;
       my_clock.incrementHC();
     }
     
@@ -310,20 +312,39 @@ int BufferPool ::findRefBit0() {
 int BufferPool ::clockPolicy() {
   // necesitamos un dirty = 0 y un refbit = 0;
   // sino dirty = 1, refbit = 0;
-  int posFrame = findRefBit0();
-  int i = 0;
-  while (i < 2 * numFrames){
+  int iteratorTwoTurns = 0;
+  int posFrame = findRefBit0(iteratorTwoTurns);
+  while (iteratorTwoTurns <= 2 * numFrames){
     if (!frames[posFrame].isDirty()) {
-      return posFrame;
-    } 
-    else {
-      i++;
-      posFrame = findRefBit0();
+      break;
+    } else {
+      posFrame = findRefBit0(iteratorTwoTurns);
     }
   }
-  return -2; 
+  return posFrame;
 }
 
-void BufferPool ::liberarPagina() {}
-
-void BufferPool ::clock_P() {}
+void BufferPool ::clock_Replacement(int pageID, string path, bool mode) {
+  int posFrame = clockPolicy();
+  if (frames[posFrame].getPinCount() > 0) {
+    cout << "==============================================\n";
+    cout << "Tienes que liberar procesos, todas las paginas estan siendo utilizadas\n";
+    cout << "Clock Necesita liberar la pagina: " << frames[posFrame].getPage().getPageId() << endl;
+    cout << "==============================================\n";
+    my_clock.decrementHC();
+  } else {
+    freeFrame(posFrame);
+    int frameFree = findFreeFrame();
+    Page cambiarPage;
+    cambiarPage.setPageId(pageID);
+    cambiarPage.setName(path);
+    frames[frameFree].setPage(cambiarPage);
+    frames[frameFree].setDirtyFlag(mode);
+    frames[frameFree].setPinCount(1);
+    frames[frameFree].setRefBit(1);
+    page_table[frameFree] = pageID;
+    cout << "==============================================\n";
+    cout << "Clock Reemplazo la pagina: " << frames[frameFree].getPage().getPageId() << endl;
+    cout << "==============================================\n";
+  }
+}

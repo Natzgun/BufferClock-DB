@@ -45,8 +45,7 @@ public:
   void LRU(); /* El LRU */
   void setPinCount(int);
   void setPageInFrame2(int frameID, int pageID, bool dirty, Page page);
-  int findRefBit0();
+  int findRefBit0(int& iteratorTwoTurns);
   int clockPolicy();
-  void  liberarPagina();
-  void clock_P();
+  void clock_Replacement(int pageID, string path, bool mode);
 };

@@ -23,3 +23,10 @@ void clockP ::incrementHC() {
     handClock = 0;
   }
 }
+
+void clockP ::decrementHC() {
+  handClock--;
+  if(handClock < 0){
+    handClock = size - 1;
+  }
+}
