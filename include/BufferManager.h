@@ -23,6 +23,8 @@ public:
 
   void savePageToDisk(int pageID);
 
+  void updatePinnedPage();
+
   void updatePage(int pageID);
 
   void deletePage(int pageID);
@@ -30,6 +32,10 @@ public:
   void printTableFrame();
 
   void useClockPolicy(int,string,char);
+
+  void pinnedPage(int pageID);
+
+  void unpinnedPage(int pageID);
 };
 
 #endif  // BUFFERMANAGER_H

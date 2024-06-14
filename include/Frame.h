@@ -10,6 +10,7 @@ private:
   int pinCount;
   Page page;
   int refbit;
+  bool pinned;
 
 public:
   // Constructor
@@ -42,6 +43,10 @@ public:
   void incrementPinCount();
 
   void decrementPinCount();
+
+  void setPinned(bool value);
+
+  bool getPinned();
 };
 
 #endif  // FRAME_H

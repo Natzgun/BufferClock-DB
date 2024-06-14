@@ -16,13 +16,14 @@ int main() {
     cout << "3. Kill Process " << endl;
     cout << "4. Save page " << endl;
     cout << "5. Print Table Frame" << endl;
-    cout << "6. Exit" << endl;
+    cout << "6. Pin" << endl;
+    cout << "7. Exit" << endl;
     cout << "================================================================"
          << endl;
     cout << "Option: ";
     cin >> instruction;
 
-    if (instruction == 6) {
+    if (instruction == 7) {
       break;
     } else if (instruction == 1) {
       cout << "En que modo desea cargar" << endl;
@@ -55,6 +56,8 @@ int main() {
       cin >> pageid;
     } else if (instruction == 5) {
       BfManger.printTableFrame();
+    } else if (instruction == 6) {
+      BfManger.updatePinnedPage();
     }
   }
   return 0;

@@ -3,7 +3,7 @@
 /* Jose Paredes */
 // Constructor
 Frame::Frame(int frameID)
-  : frameID(frameID), dirty_flag(false), pinCount(0), refbit(-1) {
+  : frameID(frameID), dirty_flag(false), pinCount(0), refbit(-1), pinned(false) {
 }
 
 // Getter for frameID
@@ -55,4 +55,14 @@ void Frame::incrementPinCount() {
 // Decrement pinCount
 void Frame::decrementPinCount() {
   pinCount--;
+}
+
+// Set Pinned
+void Frame::setPinned(bool value){
+  pinned = value;
+}
+
+// Get Pinned
+bool Frame::getPinned(){
+  return pinned;
 }

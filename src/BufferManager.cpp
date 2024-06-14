@@ -104,3 +104,27 @@ void BufferManager::savePageToDisk(int pageID) {
   cout << "Pagina guardado en disco :D" << endl;
   cout << "=============================================\n";
 }
+
+void BufferManager::updatePinnedPage() {
+  cout << "(1) Pinear pagina" << endl;
+  cout << "(2) Despinear pagina" << endl;
+  char option;
+  int idPinned;
+  cin >> option;
+  cout << "Id de la pagina a pinear: ";
+  cin >> idPinned;
+
+  if (option == '1') {
+    pinnedPage(idPinned);
+  } else {
+    unpinnedPage(idPinned);
+  }
+}
+
+void BufferManager::pinnedPage(int pageID) {
+  bpool.getFrames()[bpool.getFrameId(pageID)].setPinned(true);
+}
+
+void BufferManager::unpinnedPage(int pageID) {
+  bpool.getFrames()[bpool.getFrameId(pageID)].setPinned(false);
+}
