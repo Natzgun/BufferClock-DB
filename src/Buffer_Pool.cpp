@@ -184,9 +184,9 @@ void BufferPool::printTableFrame() {
     cout << setw(10) << frames[i].getframeID() << "\t" << setw(10)
          << frames[i].getPage().getPageId() << "\t" << setw(10)
          << (frames[i].isDirty() ? "Yes" : "No") << "\t" << setw(10)
-         << frames[i].getPinCount() << "\t" << setw(10) << frames[i].getRefBit() << setw(10)
-         << (frames[i].getPinned() ? "Yes" : "No") << "\t" << setw(10)
-         << "\t\n";
+         << frames[i].getPinCount() << "\t" << setw(10) << frames[i].getRefBit()
+         << setw(10) << (frames[i].getPinned() ? "Yes" : "No") << "\t"
+         << setw(10) << "\t\n";
   }
 }
 
@@ -289,7 +289,7 @@ UTILZADAS\n";
   }
 }*/
 
-int BufferPool ::findRefBit0(int& iteratorTwoTurns) {
+int BufferPool ::findRefBit0(int &iteratorTwoTurns) {
   bool rfBit = true;
   int posFrame = 0;
   while (rfBit) {
@@ -300,14 +300,13 @@ int BufferPool ::findRefBit0(int& iteratorTwoTurns) {
         posFrame = i;
         rfBit = false;
         break;
-      } else{
+      } else {
         frames[i].setRefBit(0);
       }
 
       iteratorTwoTurns++;
       my_clock.incrementHC();
     }
-    
   }
   return posFrame;
 }
@@ -317,14 +316,8 @@ int BufferPool ::clockPolicy() {
   // sino dirty = 1, refbit = 0;
   int iteratorTwoTurns = 0;
   int posFrame = findRefBit0(iteratorTwoTurns);
-  while (iteratorTwoTurns <= 2 * numFrames){
-    if (frames[posFrame].getPinned()) {
-      iteratorTwoTurns++;
-      my_clock.incrementHC();
-      continue;
-    }
-
-    if (!frames[posFrame].isDirty() && frames[posFrame].getPinned() == false) {
+  while (iteratorTwoTurns <= 2 * numFrames) {
+    if (!frames[posFrame].isDirty()) {
       break;
     } else {
       posFrame = findRefBit0(iteratorTwoTurns);
@@ -333,15 +326,15 @@ int BufferPool ::clockPolicy() {
   int menor_pc = frames[posFrame].getPinCount();
   bool vuelta = false;
   int contar = 0;
-  while(!vuelta){
-    for(int i = my_clock.getHandClock(); i <numFrames; i++){
+  while (!vuelta) {
+    for (int i = my_clock.getHandClock(); i < numFrames; i++) {
       i++;
-      if(contar == numFrames){
+      if (contar == numFrames) {
         vuelta = true;
         break;
       }
       int posNewFrame = findRefBit0(contar);
-      if(frames[posNewFrame].getPinCount() < menor_pc ){
+      if (frames[posNewFrame].getPinCount() < menor_pc) {
         posFrame = posNewFrame;
       }
     }
@@ -353,8 +346,10 @@ void BufferPool ::clock_Replacement(int pageID, string path, bool mode) {
   int posFrame = clockPolicy();
   if (frames[posFrame].getPinCount() > 0) {
     cout << "==============================================\n";
-    cout << "Tienes que liberar procesos, todas las paginas estan siendo utilizadas\n";
-    cout << "Clock Necesita liberar la pagina: " << frames[posFrame].getPage().getPageId() << endl;
+    cout << "Tienes que liberar procesos, todas las paginas estan siendo "
+            "utilizadas\n";
+    cout << "Clock Necesita liberar la pagina: "
+         << frames[posFrame].getPage().getPageId() << endl;
     cout << "==============================================\n";
     my_clock.decrementHC();
   } else {
@@ -369,8 +364,8 @@ void BufferPool ::clock_Replacement(int pageID, string path, bool mode) {
     frames[frameFree].setRefBit(1);
     page_table[frameFree] = pageID;
     cout << "==============================================\n";
-    cout << "Clock Reemplazo la pagina: " << frames[frameFree].getPage().getPageId() << endl;
+    cout << "Clock Reemplazo la pagina: "
+         << frames[frameFree].getPage().getPageId() << endl;
     cout << "==============================================\n";
   }
 }
-
