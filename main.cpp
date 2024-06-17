@@ -5,7 +5,7 @@
 
 /* Erick Malcoaccha*/
 int main() {
-  BufferManager BfManger(5);
+  BufferManager BfManger(3);
   while (true) {
     int instruction;
     cout << "================================================================"

@@ -83,6 +83,11 @@ void BufferManager ::useClockPolicy(int pageID, string path, char _mode) {
 }
 
 void BufferManager::killProcess(int pageID) {
+  if (bpool.getFrames()[bpool.getFrameId(pageID)].getPinned() == true) {
+    cout << "Hey, hey, hey... Esta pagina esta PINEADA no la puedes tocar \n";
+    return;
+  }
+
   std::string killed;
   bpool.getFrames()[bpool.getFrameId(pageID)].showVector();
   int salida = bpool.getFrames()[bpool.getFrameId(pageID)].freeRequest();

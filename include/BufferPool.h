@@ -46,6 +46,7 @@ public:
   void setPinCount(int);
   void setPageInFrame2(int frameID, int pageID, bool dirty, Page page);
   int findRefBit0(int& iteratorTwoTurns);
+  void findMinPinCount(int &posFrame);
   int clockPolicy();
   void clock_Replacement(int pageID, string path, bool mode);
 };
