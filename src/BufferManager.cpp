@@ -55,8 +55,9 @@ página en ese frame.
 void BufferManager ::useClockPolicy(int pageID, string path, char _mode) {
   bool mode = _mode == 'W' ? true : false;
   if (bpool.isPageLoaded(pageID)) {
+    bpool.getFrame(bpool.getFrameId(pageID)).addRequest(mode);
     cout << "La pagina ya esta cargada\n";
-    if (_mode == 'L') {
+    if (_mode == 'L' && !bpool.getFrame(bpool.getFrameId(pageID)).isDirty()) {
       bpool.getFrame(bpool.getFrameId(pageID)).setDirtyFlag(false);
     } else {
       bpool.getFrame(bpool.getFrameId(pageID)).setDirtyFlag(true);
@@ -83,14 +84,21 @@ void BufferManager ::useClockPolicy(int pageID, string path, char _mode) {
 
 void BufferManager::killProcess(int pageID) {
   std::string killed;
-  if (bpool.getFrames()[bpool.getFrameId(pageID)].isDirty() == true) {
+  bpool.getFrames()[bpool.getFrameId(pageID)].showVector();
+  int salida = bpool.getFrames()[bpool.getFrameId(pageID)].freeRequest();
+  if (salida == 1) {
+    if(bpool.getFrames()[bpool.getFrameId(pageID)].posLastWrite() == -1){
+      bpool.getFrames()[bpool.getFrameId(pageID)].setDirtyFlag(0);
+    }
     cout << "Desea guardarlo en el disco?" << std::endl;
     cout << "Si/No: ";
     cin >> killed;
     if (killed == "Si") {
       savePageToDisk(pageID);
-      bpool.getFrames()[bpool.getFrameId(pageID)].setDirtyFlag(0);
     }
+  }
+  else if(salida == -1){
+    cout << "No se puede liberar procesos que no existen\n";
   }
   bpool.modifyPinInExistingFrame(pageID, 'k');
   // bpool.incrementHistory();

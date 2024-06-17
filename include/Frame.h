@@ -2,6 +2,7 @@
 #define FRAME_H
 
 #include "Page.h"
+#include <queue>
 
 class Frame {
 private:
@@ -11,6 +12,7 @@ private:
   Page page;
   int refbit;
   bool pinned;
+  vector<int> requerimiento;
 
 public:
   // Constructor
@@ -47,6 +49,13 @@ public:
   void setPinned(bool value);
 
   bool getPinned();
+  void addRequest(bool req);
+  
+  int freeRequest();
+
+  int posLastWrite();  
+
+  void showVector();
 };
 
 #endif  // FRAME_H
