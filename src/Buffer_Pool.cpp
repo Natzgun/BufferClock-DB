@@ -139,6 +139,7 @@ void BufferPool::setPageInFrame2(int frameID, int pageID, bool dirty,
     frames[frameID].setDirtyFlag(dirty);
     frames[frameID].setPinCount(1);
     frames[frameID].setRefBit(1);
+    frames[frameID].addRequest(dirty);
 
   } else {
     cout << "SetP: Frame ID fuera de rango" << endl;
@@ -321,6 +322,22 @@ int BufferPool ::clockPolicy() {
       posFrame = findRefBit0(iteratorTwoTurns);
     }
   }
+  int menor_pc = frames[posFrame].getPinCount();
+  bool vuelta = false;
+  int contar = 0;
+  while(!vuelta){
+    for(int i = my_clock.getHandClock(); i <numFrames; i++){
+      i++;
+      if(contar == numFrames){
+        vuelta = true;
+        break;
+      }
+      int posNewFrame = findRefBit0(contar);
+      if(frames[posNewFrame].getPinCount() < menor_pc ){
+        posFrame = posNewFrame;
+      }
+    }
+  }
   return posFrame;
 }
 
@@ -348,3 +365,4 @@ void BufferPool ::clock_Replacement(int pageID, string path, bool mode) {
     cout << "==============================================\n";
   }
 }
+
