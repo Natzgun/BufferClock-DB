@@ -17,6 +17,7 @@ int main() {
     cout << "5. Print Table Frame" << endl;
     cout << "6. Pin" << endl;
     cout << "7. Exit" << endl;
+    cout << "8. Show Page Details" << endl;
     cout << "================================================================"
          << endl;
     cout << "Option: ";
@@ -57,6 +58,12 @@ int main() {
       BfManger.printTableFrame();
     } else if (instruction == 6) {
       BfManger.updatePinnedPage();
+    } else if (instruction == 8) {
+      cout << "Indica la pagina que deseas ver" << endl;
+      int pageid;
+      cout << "Page ID: ";
+      cin >> pageid;
+      BfManger.showPageDetails(pageid);
     }
   }
   return 0;

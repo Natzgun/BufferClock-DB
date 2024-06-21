@@ -2,18 +2,18 @@
 
 #include <iostream>
 
-Page::Page() : Size(0), Name(""), pageID(-1) {
+Page::Page() : capacity(0), namePath(""), pageID(-1) {
 }
 
-Page::Page(int size, string name) : Size(size), Name(name) {
+Page::Page(int size, string name) : capacity(size), namePath(name) {
 }
 
 int Page::getSize() {
-  return Size;
+  return capacity;
 }
 
 void Page::setSize(int size) {
-  Size = size;
+  capacity = size;
 }
 
 int Page::getPageId() {
@@ -25,19 +25,20 @@ void Page::setPageId(int pageId) {
 }
 
 string Page::getName() {
-  return Name;
+  return namePath;
 }
 
 void Page::setName(string name) {
-  Name = name;
+  namePath = name;
 }
 
+/*
 bool Page::addRecordInContent(string &record) {
   // Asumiendo que cada carácter cuenta como un byte
   int recordSize = record.size();
-  if (recordSize <= Size) {
+  if (recordSize <= capacity) {
     content.push_back(record);
-    Size -= recordSize; // Ajustar el tamaño restante
+    capacity -= recordSize; // Ajustar el tamaño restante
     return true;
   }
   return false;
@@ -45,13 +46,18 @@ bool Page::addRecordInContent(string &record) {
 
 bool Page::deleteRecordInContent(int index) {
   if (index >= 0 && index < content.size()) {
-    Size += content[index].size(); // Recuperar el tamaño del registro eliminado
+    capacity += content[index].size(); // Recuperar el tamaño del registro eliminado
     content.erase(content.begin() + index);
     return true;
   }
   return false;
 }
+*/
 
-vector<string> &Page::getContent() {
-  return content;
+string &Page::getContent() {
+  return contentRFL;
+}
+
+void Page::setContentRFL(string content) {
+  this->contentRFL = content;
 }

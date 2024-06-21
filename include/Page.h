@@ -8,10 +8,10 @@ using namespace std;
 
 class Page {
 private:
-  int Size;
-  string Name;
+  int capacity;
+  string namePath;
   int pageID;
-  vector<string> content;
+  string contentRFL; // contenido registro de longitud fija
 
 public:
   Page();
@@ -37,7 +37,9 @@ public:
   bool deleteRecordInContent(int index);
 
   // Devuelve el contenido de todos los registros de la página
-  vector<string> &getContent();
+  string &getContent();
+
+  void setContentRFL(string content);
 };
 
 #endif  // PAGE_H

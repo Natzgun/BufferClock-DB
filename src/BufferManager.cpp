@@ -1,5 +1,8 @@
 #include "../include/BufferManager.h"
 
+#include <fstream>
+#include <sstream>
+
 #include "../include/Frame.h"
 #include "../include/Page.h"
 
@@ -52,7 +55,7 @@ página en ese frame.
 
 // ESTO CARGA UN BLOQUE DEL DISCO AL BUFFER MANAGER
 // SEGIO CASTILLO Y ERICK MALCOACCHA
-void BufferManager ::useClockPolicy(int pageID, string path, char _mode) {
+void BufferManager::useClockPolicy(int pageID, string path, char _mode) {
   bool mode = _mode == 'W' ? true : false;
   if (bpool.isPageLoaded(pageID)) {
     bpool.getFrame(bpool.getFrameId(pageID)).addRequest(mode);
@@ -66,11 +69,34 @@ void BufferManager ::useClockPolicy(int pageID, string path, char _mode) {
     bpool.printTableFrame();
     return;
   }
+
+
+  // Open the file
+  int capacity;
+  std::string content;
+  std::ifstream file(path);
+  if (file.is_open()) {
+    std::string line;
+
+    if (std::getline(file, line)) {
+      capacity = std::stoi(line);
+    }
+
+    while (std::getline(file, line)) {
+      content += line + "\n";
+    }
+  } else {
+    cout << "error al cargar el archivo ---> " << path << "\n";
+  }
+
+
   int valueF = bpool.findFreeFrame();
   if (valueF != -2) {
     Page tempPage;
     tempPage.setName(path);
     tempPage.setPageId(pageID);
+    tempPage.setSize(capacity);
+    tempPage.setContentRFL(content);
 
     bpool.setPageInFrame2(valueF, pageID, mode, tempPage);
     bpool.printTableFrame();
@@ -94,7 +120,7 @@ void BufferManager::killProcess(int pageID) {
   bpool.getFrames()[bpool.getFrameId(pageID)].showVector();
   int salida = bpool.getFrames()[bpool.getFrameId(pageID)].freeRequest();
   if (salida == 1) {
-    if(bpool.getFrames()[bpool.getFrameId(pageID)].posLastWrite() == -1){
+    if (bpool.getFrames()[bpool.getFrameId(pageID)].posLastWrite() == -1) {
       bpool.getFrames()[bpool.getFrameId(pageID)].setDirtyFlag(0);
     }
     cout << "Desea guardarlo en el disco?" << std::endl;
@@ -103,8 +129,7 @@ void BufferManager::killProcess(int pageID) {
     if (killed == "Si") {
       savePageToDisk(pageID);
     }
-  }
-  else if(salida == -1){
+  } else if (salida == -1) {
     cout << "No se puede liberar procesos que no existen\n";
   }
   bpool.modifyPinInExistingFrame(pageID, 'k');
@@ -142,4 +167,16 @@ void BufferManager::pinnedPage(int pageID) {
 
 void BufferManager::unpinnedPage(int pageID) {
   bpool.getFrames()[bpool.getFrameId(pageID)].setPinned(false);
+}
+
+void BufferManager::showPageDetails(int pageID) {
+  if (bpool.isPageLoaded(pageID)) {
+    int frameId = bpool.getFrameId(pageID);
+    Page page = bpool.getFrame(frameId).getPage();
+    cout << "Detalles de la página:\n";
+    cout << "Capacidad: " << page.getSize() << "\n";
+    cout << "Contenido: " << "\n" << page.getContent() << "\n";
+  } else {
+    cout << "La página con ID " << pageID << " no está cargada en el BufferPool.\n";
+  }
 }

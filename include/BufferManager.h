@@ -36,6 +36,8 @@ public:
   void pinnedPage(int pageID);
 
   void unpinnedPage(int pageID);
+
+  void showPageDetails(int pageID);
 };
 
 #endif  // BUFFERMANAGER_H
