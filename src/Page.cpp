@@ -31,28 +31,26 @@ string Page::getName() {
 void Page::setName(string name) {
   namePath = name;
 }
-
-/*
 bool Page::addRecordInContent(string &record) {
-  // Asumiendo que cada carácter cuenta como un byte
-  int recordSize = record.size();
-  if (recordSize <= capacity) {
-    content.push_back(record);
-    capacity -= recordSize; // Ajustar el tamaño restante
-    return true;
+  if (record.size() > capacity) {
+    return false;
   }
-  return false;
+
+  contentRFL += record + "\n";
+  capacity -= record.size();
+
+  return true;
 }
 
 bool Page::deleteRecordInContent(int index) {
-  if (index >= 0 && index < content.size()) {
-    capacity += content[index].size(); // Recuperar el tamaño del registro eliminado
-    content.erase(content.begin() + index);
-    return true;
+  if (index < 0 || index >= contentRFL.size()) {
+    return false;
   }
-  return false;
+
+  contentRFL.erase(index, 1);
+
+  return true;
 }
-*/
 
 string &Page::getContent() {
   return contentRFL;

@@ -1,7 +1,9 @@
 #include "../include/BufferManager.h"
 
 #include <fstream>
+#include <limits>
 #include <sstream>
+#include <string>
 
 #include "../include/Frame.h"
 #include "../include/Page.h"
@@ -55,7 +57,7 @@ página en ese frame.
 
 // ESTO CARGA UN BLOQUE DEL DISCO AL BUFFER MANAGER
 // SEGIO CASTILLO Y ERICK MALCOACCHA
-void BufferManager::useClockPolicy(int pageID, string path, char _mode) {
+void BufferManager::loadPageFromDiskClock(int pageID, string path, char _mode) {
   bool mode = _mode == 'W' ? true : false;
   if (bpool.isPageLoaded(pageID)) {
     bpool.getFrame(bpool.getFrameId(pageID)).addRequest(mode);
@@ -158,6 +160,54 @@ void BufferManager::updatePinnedPage() {
     pinnedPage(idPinned);
   } else {
     unpinnedPage(idPinned);
+  }
+}
+
+void BufferManager::updatePage(int pageID) {
+  if (!bpool.isPageLoaded(pageID)) {
+    cout << "La página con ID " << pageID << " no está cargada en el BufferPool.\n";
+    return;
+  }
+
+  int frameId = bpool.getFrameId(pageID);
+  Page& page = bpool.getFrame(frameId).getPage();
+
+  cout << "(1) Añadir registro\n";
+  cout << "(2) Eliminar registro\n";
+  cout << "(3) Editar registro\n";
+  int option;
+  cin >> option;
+  cin.ignore(numeric_limits<std::streamsize>::max(), '\n');
+  string record;
+  int index;
+
+  switch (option) {
+    case 1:  // Añadir registro
+      cout << "Ingrese el nuevo registro: ";
+      getline(cin, record);
+      if (!page.addRecordInContent(record)) {
+        cout << "No hay suficiente espacio en la página para añadir el registro.\n";
+      }
+      break;
+    case 2:  // Eliminar registro
+      cout << "Ingrese el índice del registro que desea eliminar: ";
+      cin >> index;
+      if (!page.deleteRecordInContent(index)) {
+        cout << "No existe un registro en el índice proporcionado.\n";
+      }
+      break;
+    case 3:  // Editar registro
+      cout << "Ingrese el índice del registro que desea editar: ";
+      cin >> index;
+      cout << "Ingrese el nuevo contenido del registro: ";
+      cin >> record;
+      if (!page.deleteRecordInContent(index) || !page.addRecordInContent(record)) {
+        cout << "No existe un registro en el índice proporcionado o no hay suficiente espacio en la página para añadir el nuevo registro.\n";
+      }
+      break;
+    default:
+      cout << "Opción no válida.\n";
+      break;
   }
 }
 

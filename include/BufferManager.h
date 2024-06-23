@@ -27,11 +27,9 @@ public:
 
   void updatePage(int pageID);
 
-  void deletePage(int pageID);
-
   void printTableFrame();
 
-  void useClockPolicy(int,string,char);
+  void loadPageFromDiskClock(int, string, char);
 
   void pinnedPage(int pageID);
 

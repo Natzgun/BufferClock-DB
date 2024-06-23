@@ -38,9 +38,12 @@ int main() {
       string blockPath;
       cout << "Block Path: ";
       cin >> blockPath;
-      BfManger.useClockPolicy(pageid, blockPath, mode);
+      BfManger.loadPageFromDiskClock(pageid, blockPath, mode);
     } else if (instruction == 2) {
-      // BfManger.updatePage();
+      int pageID;
+      cout << "Page ID: ";
+      cin >> pageID;
+      BfManger.updatePage(pageID);
     } else if (instruction == 3) {
       cout << "Indica el proceso que deseas terminar" << endl;
       int pageid;
